@@ -21,6 +21,30 @@ type IPInfo struct {
 	Connection string `json:"connection"`
 	KeepAlive  string `json:"keep_alive"`
 	Referer    string `json:"referer"`
+	Country    string `json:"country,omitempty"`
+}
+
+// getRealIP from Cloudflare
+func getRealIP(c *fiber.Ctx) string {
+	// Get Cloudflare IP
+	if cfIP := c.Get("Cf-Connecting-Ip"); cfIP != "" {
+		return cfIP
+	}
+
+	// Get X-Real-IP
+	if realIP := c.Get("X-Real-Ip"); realIP != "" {
+		return realIP
+	}
+
+	// Get X-Forwarded-For
+	if forwardedFor := c.Get("X-Forwarded-For"); forwardedFor != "" {
+		ips := strings.Split(forwardedFor, ",")
+		if len(ips) > 0 {
+			return strings.TrimSpace(ips[0])
+		}
+	}
+
+	return c.IP()
 }
 
 func main() {
@@ -38,9 +62,8 @@ func main() {
 	app.Get("/", func(c *fiber.Ctx) error {
 		userAgent := c.Get("User-Agent")
 		isCurl := strings.HasPrefix(strings.ToLower(userAgent), "curl")
-
 		if isCurl {
-			return c.SendString(c.IP())
+			return c.SendString(getRealIP(c))
 		}
 
 		info := getIPInfo(c)
@@ -52,7 +75,7 @@ func main() {
 
 	// Routes API
 	app.Get("/ip", func(c *fiber.Ctx) error {
-		return c.SendString(c.IP())
+		return c.SendString(getRealIP(c))
 	})
 
 	app.Get("/ua", func(c *fiber.Ctx) error {
@@ -90,12 +113,31 @@ func main() {
 		return c.JSON(info)
 	})
 
+	app.Get("/ping", func(c *fiber.Ctx) error {
+		headers := c.GetReqHeaders()
+		method := string(c.Request().Header.Method())
+		uri := string(c.Request().RequestURI())
+		queryParams := c.Request().URI().QueryArgs().String()
+
+		requestInfo := map[string]interface{}{
+			"headers":      headers,
+			"method":       method,
+			"uri":          uri,
+			"query_params": queryParams,
+			"body":         string(c.Body()),
+			"real_ip":      getRealIP(c),
+			"country":      c.Get("Cf-Ipcountry"),
+		}
+
+		return c.JSON(requestInfo)
+	})
+
 	app.Listen(":3000")
 }
 
 func getIPInfo(c *fiber.Ctx) IPInfo {
 	return IPInfo{
-		IPAddr:     c.IP(),
+		IPAddr:     getRealIP(c),
 		RemoteHost: "unavailable",
 		UserAgent:  c.Get("User-Agent"),
 		Port:       c.Port(),
@@ -108,6 +150,7 @@ func getIPInfo(c *fiber.Ctx) IPInfo {
 		Connection: c.Get("Connection"),
 		KeepAlive:  c.Get("Keep-Alive"),
 		Referer:    c.Get("Referer"),
+		Country:    c.Get("Cf-Ipcountry"),
 	}
 }
 
@@ -121,5 +164,6 @@ func formatPlainTextResponse(info IPInfo) string {
 		"encoding: " + info.Encoding + "\n" +
 		"mime: " + info.Mime + "\n" +
 		"via: " + info.Via + "\n" +
-		"forwarded: " + info.Forwarded
+		"forwarded: " + info.Forwarded + "\n" +
+		"country: " + info.Country
 }
