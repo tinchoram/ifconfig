@@ -22,6 +22,7 @@ type IPInfo struct {
 	KeepAlive  string `json:"keep_alive"`
 	Referer    string `json:"referer"`
 	Country    string `json:"country,omitempty"`
+	Host       string `json:"host"`
 }
 
 // getRealIP from Cloudflare
@@ -151,6 +152,7 @@ func getIPInfo(c *fiber.Ctx) IPInfo {
 		KeepAlive:  c.Get("Keep-Alive"),
 		Referer:    c.Get("Referer"),
 		Country:    c.Get("Cf-Ipcountry"),
+		Host:       c.Hostname(),
 	}
 }
 
@@ -165,5 +167,6 @@ func formatPlainTextResponse(info IPInfo) string {
 		"mime: " + info.Mime + "\n" +
 		"via: " + info.Via + "\n" +
 		"forwarded: " + info.Forwarded + "\n" +
-		"country: " + info.Country
+		"country: " + info.Country + "\n" +
+		"host: " + info.Host
 }
