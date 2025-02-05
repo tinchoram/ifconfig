@@ -41,34 +41,38 @@
                 <strong>X-Forwarded-For</strong>
                 <span>{{.info.Forwarded}}</span>
             </div>
+            <div class="info-row">
+                <strong>Host</strong>
+                <span>{{.info.Host}}</span>
+            </div>
         </div>
     </section>
 
     <section class="cli-interface">
         <h2>Command Line Interface</h2>
         <div class="commands">
-                <pre><code><span class="prompt">$ curl localhost:3000</span>
+                <pre><code><span class="prompt">$ curl {{.info.Host}}</span>
 <span class="output">{{.info.IPAddr}}</span>
 
-$ curl localhost:3000/ip
+$ curl {{.info.Host}}/ip
 ⇒{{.info.IPAddr}}
 
-$ curl localhost:3000/ua
+$ curl {{.info.Host}}/ua
 ⇒{{.info.UserAgent}}
 
-$ curl localhost:3000/lang
+$ curl {{.info.Host}}/lang
 ⇒{{.info.Language}}
 
-$ curl localhost:3000/encoding
+$ curl {{.info.Host}}/encoding
 ⇒{{.info.Encoding}}
 
-$ curl localhost:3000/mime
+$ curl {{.info.Host}}/mime
 ⇒{{.info.Mime}}
 
-$ curl localhost:3000/forwarded
+$ curl {{.info.Host}}/forwarded
 ⇒{{.info.Forwarded}}
 
-$ curl localhost:3000/all
+$ curl {{.info.Host}}/all
 ⇒ip_addr: {{.info.IPAddr}}
 remote_host: {{.info.RemoteHost}}
 user_agent: {{.info.UserAgent}}
