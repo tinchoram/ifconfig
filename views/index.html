@@ -51,11 +51,23 @@
             <div class="group__title">Network</div>
             <dl class="spec">
                 <div class="spec__row"><dt>IP address</dt><dd>{{.info.IPAddr}}</dd></div>
+                <div class="spec__row"><dt>Reverse DNS</dt><dd>{{.info.RemoteHost}}</dd></div>
                 <div class="spec__row"><dt>Host</dt><dd>{{.info.Host}}</dd></div>
-                <div class="spec__row"><dt>Port</dt><dd>{{.info.Port}}</dd></div>
                 <div class="spec__row"><dt>X-Forwarded-For</dt><dd>{{.info.Forwarded}}</dd></div>
                 <div class="spec__row"><dt>Via</dt><dd>{{.info.Via}}</dd></div>
+            </dl>
+        </div>
+
+        <div class="group">
+            <div class="group__title">Location</div>
+            <dl class="spec">
+                <div class="spec__row"><dt>City</dt><dd>{{.info.City}}</dd></div>
+                <div class="spec__row"><dt>Region</dt><dd>{{.info.Region}}</dd></div>
                 <div class="spec__row"><dt>Country</dt><dd>{{.info.Country}}</dd></div>
+                <div class="spec__row"><dt>Postal code</dt><dd>{{.info.PostalCode}}</dd></div>
+                <div class="spec__row"><dt>Coordinates</dt><dd>{{if or .info.Latitude .info.Longitude}}{{.info.Latitude}}, {{.info.Longitude}}{{end}}</dd></div>
+                <div class="spec__row"><dt>Timezone</dt><dd>{{.info.Timezone}}</dd></div>
+                <div class="spec__row"><dt>Continent</dt><dd>{{.info.Continent}}</dd></div>
             </dl>
         </div>
 

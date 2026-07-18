@@ -18,7 +18,6 @@ func NewHTTPGateway(c *fiber.Ctx) *FiberHTTPGateway {
 }
 
 func (g *FiberHTTPGateway) GetHeader(key string) string { return g.ctx.Get(key) }
-func (g *FiberHTTPGateway) GetPort() string             { return g.ctx.Port() }
 func (g *FiberHTTPGateway) GetMethod() string           { return g.ctx.Method() }
 func (g *FiberHTTPGateway) GetHostname() string         { return g.ctx.Hostname() }
 func (g *FiberHTTPGateway) GetIP() string               { return g.ctx.IP() }
