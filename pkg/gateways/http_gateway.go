@@ -1,20 +1,19 @@
 package gateways
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/gofiber/fiber/v2"
 
-type Gateway interface {
-	GetHeader(string) string
-	GetPort() string
-	GetMethod() string
-	GetHostname() string
-	GetIP() string
-	GetReqHeaders() map[string]string
-}
+	"ifconfig/pkg/interactions"
+)
+
+// FiberHTTPGateway adapts a fiber.Ctx to the interactions.Gateway port.
 type FiberHTTPGateway struct {
 	ctx *fiber.Ctx
 }
 
-func NewHTTPGateway(c *fiber.Ctx) Gateway {
+var _ interactions.Gateway = (*FiberHTTPGateway)(nil)
+
+func NewHTTPGateway(c *fiber.Ctx) *FiberHTTPGateway {
 	return &FiberHTTPGateway{ctx: c}
 }
 

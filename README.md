@@ -40,15 +40,17 @@ This project follows the **GIMU** architecture, a structure designed by **@tinch
 ├── go.mod
 ├── go.sum
 ├── cmd/
-│   └── main.go   # Entry point of the application
+│   └── ifconfig/
+│       └── main.go   # Entry point of the application
 ├── pkg/
-│   ├── gateways/ # Handles HTTP requests and headers
-│   │   ├── gateway.go
-│   ├── interactions/ # Business logic (IP processing, API responses)
+│   ├── gateways/ # Adapters for external interactions (HTTP)
+│   │   ├── http_gateway.go
+│   ├── interactions/ # Business logic and ports (IP processing)
 │   │   ├── ip_service.go
+│   │   ├── ip_service_test.go
 │   ├── models/  # Defines the data structures
 │   │   ├── ip_info.go
-│   ├── utils/  # Utility functions (formatting, logging)
+│   ├── utils/  # Utility functions (formatting)
 │   │   ├── formatter.go
 ├── views/
 │   └── index.html
@@ -80,6 +82,20 @@ This project follows the **GIMU** architecture, a structure designed by **@tinch
 | `/all.json` | Returns all information in JSON format |
 | `/ping` | Returns request details (headers, method, IP, etc.) |
 | `/details.json` | Returns extended information with timestamp |
+| `/status` | Health check: returns `{"status":"OK"}` with a timestamp |
+
+## ⚙️ Configuration
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `TRUSTED_PROXIES` | `127.0.0.1,::1` | Comma-separated IPs/CIDR ranges of reverse proxies allowed to set the proxy header |
+| `PROXY_HEADER` | `X-Forwarded-For` | Header used to resolve the client IP. Behind Cloudflare, set it to `Cf-Connecting-Ip` |
+| `PORT` | `3000` | Port the server listens on |
+| `HOST` | *(all interfaces)* | Address the server binds to |
+
+The server handles `SIGINT`/`SIGTERM` with a graceful shutdown (10s timeout), so in-flight requests complete when Docker stops the container.
+
+> **Security note:** by default only loopback is trusted, so forged proxy headers from external clients are ignored and the TCP socket IP is reported. When deploying behind a reverse proxy, set `TRUSTED_PROXIES` to that proxy's IP or CIDR range (see `examples/docker-compose.yml`). Do **not** widen the trust list for standalone `docker run -p` deployments — trusting broad ranges lets any peer on those networks spoof its reported address.
 
 ## 🚦 Getting Started
 
@@ -103,7 +119,7 @@ go mod download
 
 3. Run the application:
 ```bash
-go run cmd/main.go
+go run ./cmd/ifconfig
 ```
 
 The service will be available at `http://localhost:3000`

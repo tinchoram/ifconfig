@@ -2,9 +2,17 @@
 .git
 .gitignore
 
+# CI/CD
+.github
+
 # Docker
 Dockerfile
 .dockerignore
+
+# Docs and examples (not needed in the build context)
+examples/
+README.md
+*.md
 
 # Binarios y archivos temporales
 *.exe

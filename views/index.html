@@ -4,92 +4,116 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>What Is My IP Address? - Go IP Info</title>
+    <link rel="icon" type="image/png" href="/img/gopher-arg.png">
     <link rel="stylesheet" href="/css/styles.css">
+    <script>
+        (function () {
+            var t = localStorage.getItem("theme");
+            if (t === "light" || t === "dark") {
+                document.documentElement.setAttribute("data-theme", t);
+            }
+        })();
+    </script>
 </head>
 <body>
-<div class="container">
-    <h1>What Is My IP Address?</h1>
-
-    <section class="connection-info">
-        <h2>Your Connection</h2>
-        <div class="info-grid">
-            <div class="info-row">
-                <strong>IP Address</strong>
-                <span>{{.info.IPAddr}}</span>
+<main class="card">
+    <section class="hero">
+        <div class="hero__top">
+            <picture>
+                <source srcset="/img/gopher-arg.webp" type="image/webp">
+                <img class="gopher" src="/img/gopher-arg.png" alt="Go gopher" width="56" height="56">
+            </picture>
+            <div class="hero__brand">
+                <span class="hero__name">Go IP Info</span>
+                <span class="hero__tag">what is my IP address?</span>
             </div>
-            <div class="info-row">
-                <strong>User Agent</strong>
-                <span>{{.info.UserAgent}}</span>
-            </div>
-            <div class="info-row">
-                <strong>Language</strong>
-                <span>{{.info.Language}}</span>
-            </div>
-            <div class="info-row">
-                <strong>Method</strong>
-                <span>{{.info.Method}}</span>
-            </div>
-            <div class="info-row">
-                <strong>Encoding</strong>
-                <span>{{.info.Encoding}}</span>
-            </div>
-            <div class="info-row">
-                <strong>MIME Type</strong>
-                <span>{{.info.Mime}}</span>
-            </div>
-            <div class="info-row">
-                <strong>X-Forwarded-For</strong>
-                <span>{{.info.Forwarded}}</span>
-            </div>
-            <div class="info-row">
-                <strong>Host</strong>
-                <span>{{.info.Host}}</span>
-            </div>
+            <button type="button" class="theme-toggle" aria-label="Toggle light or dark theme">
+                <svg class="icon icon--moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/>
+                </svg>
+                <svg class="icon icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="4"/>
+                    <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>
+                </svg>
+            </button>
         </div>
+
+        <div class="hero__label">
+            Your IP address
+            <span class="live__dot"></span>
+        </div>
+        <div class="hero__ip">{{.info.IPAddr}}</div>
+        <p class="hero__host">resolved for <span>{{.info.Host}}</span></p>
     </section>
 
-    <section class="cli-interface">
-        <h2>Command Line Interface</h2>
-        <div class="commands">
-                <pre><code><span class="prompt">$ curl {{.info.Host}}</span>
-<span class="output">{{.info.IPAddr}}</span>
-
-$ curl {{.info.Host}}/ip
-⇒{{.info.IPAddr}}
-
-$ curl {{.info.Host}}/ua
-⇒{{.info.UserAgent}}
-
-$ curl {{.info.Host}}/lang
-⇒{{.info.Language}}
-
-$ curl {{.info.Host}}/encoding
-⇒{{.info.Encoding}}
-
-$ curl {{.info.Host}}/mime
-⇒{{.info.Mime}}
-
-$ curl {{.info.Host}}/forwarded
-⇒{{.info.Forwarded}}
-
-$ curl {{.info.Host}}/all
-⇒ip_addr: {{.info.IPAddr}}
-remote_host: {{.info.RemoteHost}}
-user_agent: {{.info.UserAgent}}
-port: {{.info.Port}}
-language: {{.info.Language}}
-method: {{.info.Method}}
-encoding: {{.info.Encoding}}
-mime: {{.info.Mime}}
-via: {{.info.Via}}
-forwarded: {{.info.Forwarded}}</code></pre>
+    <div class="body">
+        <div class="group">
+            <div class="group__title">Network</div>
+            <dl class="spec">
+                <div class="spec__row"><dt>IP address</dt><dd>{{.info.IPAddr}}</dd></div>
+                <div class="spec__row"><dt>Host</dt><dd>{{.info.Host}}</dd></div>
+                <div class="spec__row"><dt>Port</dt><dd>{{.info.Port}}</dd></div>
+                <div class="spec__row"><dt>X-Forwarded-For</dt><dd>{{.info.Forwarded}}</dd></div>
+                <div class="spec__row"><dt>Via</dt><dd>{{.info.Via}}</dd></div>
+                <div class="spec__row"><dt>Country</dt><dd>{{.info.Country}}</dd></div>
+            </dl>
         </div>
-    </section>
 
-    <footer>
-        <p>© {{.year}} Go IP Info</p>
-        <p>by <a href="https://tinchoram.com" target="_blank">@tinchoram</a> | <a href="https://github.com/tinchoram/ifconfig" target="_blank">GitHub</a></p>
+        <div class="group">
+            <div class="group__title">Client</div>
+            <dl class="spec">
+                <div class="spec__row"><dt>User agent</dt><dd>{{.info.UserAgent}}</dd></div>
+                <div class="spec__row"><dt>Language</dt><dd>{{.info.Language}}</dd></div>
+                <div class="spec__row"><dt>Method</dt><dd>{{.info.Method}}</dd></div>
+                <div class="spec__row"><dt>Encoding</dt><dd>{{.info.Encoding}}</dd></div>
+                <div class="spec__row"><dt>MIME type</dt><dd>{{.info.Mime}}</dd></div>
+            </dl>
+        </div>
+
+        <div class="api">
+            <div class="api__title">Endpoints</div>
+            <div class="api__list">
+                <button type="button" class="ep" data-cmd="{{.info.Host}}/ip"><span class="ep__method">GET</span>/ip</button>
+                <button type="button" class="ep" data-cmd="{{.info.Host}}/ua"><span class="ep__method">GET</span>/ua</button>
+                <button type="button" class="ep" data-cmd="{{.info.Host}}/lang"><span class="ep__method">GET</span>/lang</button>
+                <button type="button" class="ep" data-cmd="{{.info.Host}}/encoding"><span class="ep__method">GET</span>/encoding</button>
+                <button type="button" class="ep" data-cmd="{{.info.Host}}/mime"><span class="ep__method">GET</span>/mime</button>
+                <button type="button" class="ep" data-cmd="{{.info.Host}}/forwarded"><span class="ep__method">GET</span>/forwarded</button>
+                <button type="button" class="ep" data-cmd="{{.info.Host}}/all"><span class="ep__method">GET</span>/all</button>
+                <button type="button" class="ep" data-cmd="{{.info.Host}}/all.json"><span class="ep__method">GET</span>/all.json</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="foot">
+        <span>© {{.year}} Go IP Info</span>
+        <span>by <a href="https://tinchoram.com" target="_blank" rel="noopener">@tinchoram</a> · <a href="https://github.com/tinchoram/ifconfig" target="_blank" rel="noopener">GitHub</a></span>
     </footer>
-</div>
+</main>
+
+<script>
+    document.querySelector(".theme-toggle").addEventListener("click", function () {
+        var root = document.documentElement;
+        var explicit = root.getAttribute("data-theme");
+        var isDark = explicit
+            ? explicit === "dark"
+            : window.matchMedia("(prefers-color-scheme: dark)").matches;
+        var next = isDark ? "light" : "dark";
+        root.setAttribute("data-theme", next);
+        localStorage.setItem("theme", next);
+    });
+
+    document.querySelectorAll(".ep").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+            var cmd = btn.getAttribute("data-cmd");
+            navigator.clipboard.writeText(cmd).then(function () {
+                btn.setAttribute("data-copied", "");
+                setTimeout(function () {
+                    btn.removeAttribute("data-copied");
+                }, 1200);
+            });
+        });
+    });
+</script>
 </body>
 </html>

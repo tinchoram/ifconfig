@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   nginx:
     image: nginx:latest
@@ -11,16 +9,32 @@ services:
     depends_on:
       - hostone
       - hosttwo
+    networks:
+      - proxy_net
 
   hostone:
-    image: tinchoram/ifconfig:0.2.0
+    image: tinchoram/ifconfig:0.3.0
     container_name: hostone
-
+    environment:
+      # Trust only the compose-managed proxy network defined below.
+      - TRUSTED_PROXIES=172.28.0.0/16
+    networks:
+      - proxy_net
 
   hosttwo:
-    image: tinchoram/ifconfig:0.2.0
+    image: tinchoram/ifconfig:0.3.0
     container_name: hosttwo
+    environment:
+      - TRUSTED_PROXIES=172.28.0.0/16
+    networks:
+      - proxy_net
 
+networks:
+  proxy_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
 
 volumes:
   nginx_conf:
